@@ -1,6 +1,8 @@
 library(tidyverse)
 library(jpstat)
 
+pkgload::load_all(".")
+
 # iotable -----------------------------------------------------------------
 
 appId <- keyring::key_get("estat-api")
@@ -40,7 +42,8 @@ iotable_template_2011 <- iotable_template_2011 |>
                                  str_starts(output_name, "7") ~ "finaldemand",
                                  str_starts(output_name, "81") ~ "export",
                                  str_starts(output_name, "8[4-6]") ~ "import"),
-         value_M = parse_number(value_M)) |>
+         value = parse_number(value_M) * 1e6) |>
+  select(!value_M) |>
   relocate(input_type, input_name, output_type, output_name) |>
   as_iotable()
 
