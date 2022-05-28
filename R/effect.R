@@ -1,6 +1,5 @@
 #' @export
-spillover_effect <- function(x,
-                             finaldemand_change = list(),
+spillover_effect <- function(x, finaldemand_change,
                              mat_type = c("I-(I-M)A", "I-A")) {
   mat_type <- arg_match(mat_type, c("I-(I-M)A", "I-A"))
 
