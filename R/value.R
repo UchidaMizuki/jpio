@@ -6,7 +6,7 @@ total_input <- function(x,
 
   x |>
     dibble::apply("output", sum) |>
-    filter(output$type %in% output_type)
+    dplyr::filter(output$type %in% output_type)
 }
 
 #' @export
@@ -17,7 +17,7 @@ total_output <- function(x,
 
   x |>
     dibble::apply("input", sum) |>
-    filter(input$type %in% input_type)
+    dplyr::filter(input$type %in% input_type)
 }
 
 #' @export
@@ -27,24 +27,24 @@ local_output <- function(x,
                           multiple = TRUE)
 
   x |>
-    filter(!output$type %in% c("export", "import")) |>
+    dplyr::filter(!output$type %in% c("export", "import")) |>
     dibble::apply("input", sum) |>
-    filter(input$type %in% input_type)
+    dplyr::filter(input$type %in% input_type)
 }
 
 #' @export
 export_value <- function(x) {
   x |>
-    filter(input$type == "industry",
-           output$type == "export") |>
+    dplyr::filter(input$type == "industry",
+                  output$type == "export") |>
     dibble::apply("input", sum)
 }
 
 #' @export
 import_value <- function(x) {
   out <- x |>
-    filter(input$type == "industry",
-           output$type == "import") |>
+    dplyr::filter(input$type == "industry",
+                  output$type == "import") |>
     dibble::apply("input", sum)
   -out
 }

@@ -11,7 +11,7 @@ spillover_effect <- function(x, finaldemand_change,
                       .names_sep = "_")
 
   FD <- x |>
-    filter(input$type == "industry") |>
+    dplyr::filter(input$type == "industry") |>
     dibble::apply("input", \(x) 0) |>
     dplyr::rows_update(finaldemand_change)
 

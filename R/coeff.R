@@ -11,12 +11,12 @@ input_coeff <- function(x,
     total_input(output_type)
 
   x <- x |>
-    filter(input$type %in% input_type,
-           output$type %in% output_type)
+    dplyr::filter(input$type %in% input_type,
+                  output$type %in% output_type)
 
-  dibble::broadcast(ifelse(x == 0,
-                           0,
-                           x / totalinput),
+  dibble::broadcast(dibble::ifelse(x == 0,
+                                   0,
+                                   x / totalinput),
                     c("input", "output"))
 }
 
@@ -33,12 +33,12 @@ alloc_coeff <- function(x,
     total_output(input_type)
 
   x <- x |>
-    filter(input$type %in% input_type,
-           output$type %in% output_type)
+    dplyr::filter(input$type %in% input_type,
+                  output$type %in% output_type)
 
-  dibble::broadcast(ifelse(x == 0,
-                           0,
-                           x / totaloutput),
+  dibble::broadcast(dibble::ifelse(x == 0,
+                                   0,
+                                   x / totaloutput),
                     c("input", "output"))
 }
 
@@ -47,9 +47,9 @@ import_coeff <- function(x) {
   import <- import_value(x)
   localoutput <- local_output(x)
 
-  ifelse(import == 0,
-         0,
-         import / localoutput)
+  dibble::ifelse(import == 0,
+                 0,
+                 import / localoutput)
 }
 
 #' @export
@@ -57,7 +57,7 @@ export_coeff <- function(x) {
   export <- export_value(x)
   totaloutput <- total_output(x)
 
-  ifelse(export == 0,
-         0,
-         export / totaloutput)
+  dibble::ifelse(export == 0,
+                 0,
+                 export / totaloutput)
 }
