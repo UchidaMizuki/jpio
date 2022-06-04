@@ -40,13 +40,13 @@ as_iotable <- function(x,
     dplyr::mutate(dplyr::across(c("input_type", "output_type"),
                                 ~ vec_slice(names(type),
                                             vec_match(.x, unname(type)))),
-                  input_type = input_type |>
+                  input_type = .data$input_type |>
                     factor(c("industry", "valueadded")),
-                  output_type = output_type |>
+                  output_type = .data$output_type |>
                     factor(c("industry", "finaldemand", "export", "import"))) |>
-    dplyr::arrange(input_type, input_name, output_type, output_name) |>
-    dibble::dibble_by(input = c(input_type, input_name),
-                      output = c(output_type, output_name),
+    dplyr::arrange("input_type", "input_name", "output_type", "output_name") |>
+    dibble::dibble_by(input = c("input_type", "input_name"),
+                      output = c("output_type", "output_name"),
                       .names_sep = "_")
 
   out[[1L]] |>

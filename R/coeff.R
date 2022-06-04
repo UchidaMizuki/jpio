@@ -19,8 +19,8 @@ input_coeff <- function(x,
     total_input(output_type)
 
   x <- x |>
-    dplyr::filter(input$type %in% input_type,
-                  output$type %in% output_type)
+    dplyr::filter(.data$input$type %in% input_type,
+                  .data$output$type %in% output_type)
 
   dibble::broadcast(dibble::ifelse(x == 0,
                                    0,
@@ -49,8 +49,8 @@ alloc_coeff <- function(x,
     total_output(input_type)
 
   x <- x |>
-    dplyr::filter(input$type %in% input_type,
-                  output$type %in% output_type)
+    dplyr::filter(.data$input$type %in% input_type,
+                  .data$output$type %in% output_type)
 
   dibble::broadcast(dibble::ifelse(x == 0,
                                    0,

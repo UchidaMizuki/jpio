@@ -15,11 +15,11 @@ spillover_effect <- function(x, finaldemand_change,
     tibble::enframe("input_name") |>
     tibble::add_column(input_type = factor("industry"),
                        .before = 1L) |>
-    dibble::dibble_by(input = c(input_type, input_name),
+    dibble::dibble_by(input = c("input_type", "input_name"),
                       .names_sep = "_")
 
   FD <- x |>
-    dplyr::filter(input$type == "industry") |>
+    dplyr::filter(.data$input$type == "industry") |>
     dibble::apply("input", \(x) 0) |>
     dplyr::rows_update(finaldemand_change)
 
