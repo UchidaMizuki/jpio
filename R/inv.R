@@ -10,7 +10,7 @@ leontief_inv <- function(x,
     M <- import_coeff(x)
 
     dibble::broadcast(solve(I - (1 - M) * A),
-                      c("input", "output"))
+                      c("output", "input"))
   } else if (mat_type == "I-A") {
     solve(I - A)
   }
