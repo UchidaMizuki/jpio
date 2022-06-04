@@ -71,7 +71,7 @@ import_coeff <- function(x) {
 
   dibble::ifelse(import == 0,
                  0,
-                 import / localoutput)
+                 import / localdemand)
 }
 
 #' Export coefficient vector
