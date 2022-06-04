@@ -21,7 +21,7 @@ total_output <- function(x,
 }
 
 #' @export
-local_output <- function(x,
+local_demand <- function(x,
                          input_type = "industry") {
   input_type <- arg_match(input_type, c("industry", "valueadded"),
                           multiple = TRUE)
