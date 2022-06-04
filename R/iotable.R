@@ -1,3 +1,12 @@
+#' Input-output table
+#'
+#' @param x A data frame.
+#' @param input A named list of column names of inputs.
+#' @param output A named list of column names of outputs.
+#' @param type A named list of input or output names.
+#'
+#' @return A dibble of input-output table.
+#'
 #' @export
 as_iotable <- function(x,
                        input = list(),

@@ -1,3 +1,10 @@
+#' Total input
+#'
+#' @param x A input-output table.
+#' @param output_type Output type.
+#'
+#' @return A dibble of total input.
+#'
 #' @export
 total_input <- function(x,
                         output_type = "industry") {
@@ -9,6 +16,13 @@ total_input <- function(x,
     dplyr::filter(output$type %in% output_type)
 }
 
+#' Total output
+#'
+#' @param x A input-output table.
+#' @param input_type Input type.
+#'
+#' @return A dibble of total output.
+#'
 #' @export
 total_output <- function(x,
                          input_type = "industry") {
@@ -20,6 +34,13 @@ total_output <- function(x,
     dplyr::filter(input$type %in% input_type)
 }
 
+#' Local demand
+#'
+#' @param x A input-output table.
+#' @param input_type Input type.
+#'
+#' @return A dibble of local demand.
+#'
 #' @export
 local_demand <- function(x,
                          input_type = "industry") {
@@ -32,6 +53,12 @@ local_demand <- function(x,
     dplyr::filter(input$type %in% input_type)
 }
 
+#' Export value
+#'
+#' @param x A input-output table.
+#'
+#' @return A dibble of export value.
+#'
 #' @export
 export_value <- function(x) {
   x |>
@@ -40,6 +67,12 @@ export_value <- function(x) {
     dibble::apply("input", sum)
 }
 
+#' Import value
+#'
+#' @param x A input-output table.
+#'
+#' @return A dibble of import value.
+#'
 #' @export
 import_value <- function(x) {
   out <- x |>

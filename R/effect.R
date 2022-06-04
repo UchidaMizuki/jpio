@@ -1,3 +1,11 @@
+#' Spillover effect
+#'
+#' @param x An input-output table.
+#' @param finaldemand_change A named numeric vector of changes in final demand.
+#' @param mat_type A type of Leontief inverse matrix.
+#'
+#' @return A dibble of spillover effect.
+#'
 #' @export
 spillover_effect <- function(x, finaldemand_change,
                              mat_type = c("I-(I-M)A", "I-A")) {

@@ -1,3 +1,10 @@
+#' Leontief inverse matrix
+#'
+#' @param x An input-output table.
+#' @param mat_type A type of Leontief inverse matrix.
+#'
+#' @return A dibble of Leontief inverse matrix.
+#'
 #' @export
 leontief_inv <- function(x,
                          mat_type = c("I-(I-M)A", "I-A")) {
@@ -16,6 +23,12 @@ leontief_inv <- function(x,
   }
 }
 
+#' Ghosh inverse matrix
+#'
+#' @param x An input-output table.
+#'
+#' @return A dibble of Ghosh inverse matrix.
+#'
 #' @export
 ghosh_inv <- function(x) {
   B <- alloc_coeff(x)

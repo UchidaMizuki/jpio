@@ -1,3 +1,11 @@
+#' Input coefficient matrix
+#'
+#' @param x An input-output table.
+#' @param input_type Input type.
+#' @param output_type Output type.
+#'
+#' @return A dibble of input coefficient matrix.
+#'
 #' @export
 input_coeff <- function(x,
                         input_type = "industry",
@@ -20,6 +28,14 @@ input_coeff <- function(x,
                     c("input", "output"))
 }
 
+#' Allocation coefficient matrix
+#'
+#' @param x An input-output table.
+#' @param input_type Input type.
+#' @param output_type Output type.
+#'
+#' @return A dibble of allocation coefficient matrix.
+#'
 #' @export
 alloc_coeff <- function(x,
                         input_type = "industry",
@@ -42,6 +58,12 @@ alloc_coeff <- function(x,
                     c("input", "output"))
 }
 
+#' Import coefficient vector
+#'
+#' @param x An input-output table.
+#'
+#' @return A dibble of import coefficient vector.
+#'
 #' @export
 import_coeff <- function(x) {
   import <- import_value(x)
@@ -52,6 +74,12 @@ import_coeff <- function(x) {
                  import / localoutput)
 }
 
+#' Export coefficient vector
+#'
+#' @param x An input-output table.
+#'
+#' @return A dibble of export coefficient vector.
+#'
 #' @export
 export_coeff <- function(x) {
   export <- export_value(x)
