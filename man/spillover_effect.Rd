@@ -4,7 +4,7 @@
 \alias{spillover_effect}
 \title{Spillover effect}
 \usage{
-spillover_effect(x, finaldemand_change, mat_type = c("I-(I-M)A", "I-A"))
+spillover_effect(x, finaldemand_change, mat_type = c("open", "closed"))
 }
 \arguments{
 \item{x}{An input-output table.}

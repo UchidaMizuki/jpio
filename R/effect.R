@@ -8,8 +8,8 @@
 #'
 #' @export
 spillover_effect <- function(x, finaldemand_change,
-                             mat_type = c("I-(I-M)A", "I-A")) {
-  mat_type <- arg_match(mat_type, c("I-(I-M)A", "I-A"))
+                             mat_type = c("open", "closed")) {
+  mat_type <- arg_match(mat_type, c("open", "closed"))
 
   finaldemand_change <- vec_c(!!!finaldemand_change) |>
     tibble::enframe("input_name") |>
@@ -25,11 +25,11 @@ spillover_effect <- function(x, finaldemand_change,
 
   L <- leontief_inv(x, mat_type)
 
-  if (mat_type == "I-(I-M)A") {
+  if (mat_type == "open") {
     M <- import_coeff(x)
 
     L %*% ((1 - M) * FD)
-  } else if (mat_type == "I-A") {
+  } else if (mat_type == "closed") {
     L %*% FD
   }
 }

@@ -4,7 +4,7 @@
 \alias{leontief_inv}
 \title{Leontief inverse matrix}
 \usage{
-leontief_inv(x, mat_type = c("I-(I-M)A", "I-A"))
+leontief_inv(x, mat_type = c("open", "closed"))
 }
 \arguments{
 \item{x}{An input-output table.}
