@@ -1,6 +1,8 @@
 test_that("skyline", {
   # library(dibble)
 
+  ggplot2::theme_set(ggplot2::theme_light())
+
   x <- iotable_sector13_2011
 
   as_tibble_unnest <- function(x, n) {
@@ -64,12 +66,40 @@ test_that("skyline", {
     dplyr::left_join(totalinput,
                      by = c("output_type", "output_name"))
 
+  # line
+  line_self_sufficiency <- self_sufficiency |>
+    dplyr::filter(fill == "domestic_production") |>
+    dplyr::select(!c(fill, ymin)) |>
+    dplyr::rename(x = xmin,
+                  y = ymax,
+                  xend = xmax) |>
+    dplyr::mutate(yend = y)
+
+  line_self_sufficiency <- dplyr::bind_rows(line_self_sufficiency,
+                                            line_self_sufficiency |>
+                                              dplyr::select(!xend) |>
+                                              dplyr::mutate(xend = x,
+                                                            yend = dplyr::lag(y)) |>
+                                              dplyr::slice(-1))
+
   self_sufficiency |>
     ggplot2::ggplot() +
     ggplot2::geom_rect(ggplot2::aes(xmin = xmin,
                                     xmax = xmax,
                                     ymin = ymin,
                                     ymax = ymax,
-                                    fill = fill)) +
-    ggplot2::geom_hline(yintercept = 1)
+                                    fill = fill),
+                       color = "black") +
+    ggplot2::geom_hline(yintercept = 1) +
+    ggplot2::geom_segment(data = line_self_sufficiency,
+                          ggplot2::aes(x, y,
+                                       xend = xend,
+                                       yend = yend),
+                          color = "red") +
+    ggplot2::geom_text(ggplot2::aes((xmin + xmax) / 2,
+                                    label = output_name),
+                       y = 0,
+                       angle = -90) +
+    ggplot2::scale_fill_manual(values = c(domestic_production = "whitesmoke",
+                                          import_substitution = "darkgray"))
 })
