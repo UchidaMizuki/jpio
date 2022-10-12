@@ -28,3 +28,10 @@ You can install the development version of jpio from [GitHub](https://github.com
 # install.packages("devtools")
 devtools::install_github("UchidaMizuki/jpio")
 ```
+
+```{r}
+library(jpio)
+
+iotable_sector13_2011
+skyline(iotable_sector13_2011)
+```
