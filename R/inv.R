@@ -10,11 +10,11 @@ leontief_inv <- function(x,
                          mat_type = c("open", "closed")) {
   mat_type <- arg_match(mat_type, c("open", "closed"))
 
-  A <- input_coeff(x)
+  A <- input_coef(x)
   I <- dibble::eye(A)
 
   if (mat_type == "open") {
-    M <- import_coeff(x)
+    M <- import_coef(x)
 
     dibble::broadcast(solve(I - (1 - M) * A),
                       c("output", "input"))
@@ -31,7 +31,7 @@ leontief_inv <- function(x,
 #'
 #' @export
 ghosh_inv <- function(x) {
-  B <- alloc_coeff(x)
+  B <- alloc_coef(x)
   I <- dibble::eye(B)
 
   solve(I - B)

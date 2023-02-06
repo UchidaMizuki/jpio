@@ -26,7 +26,7 @@ spillover_effect <- function(x, finaldemand_change,
   L <- leontief_inv(x, mat_type)
 
   if (mat_type == "open") {
-    M <- import_coeff(x)
+    M <- import_coef(x)
 
     L %*% ((1 - M) * FD)
   } else if (mat_type == "closed") {

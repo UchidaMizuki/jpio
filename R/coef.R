@@ -7,9 +7,9 @@
 #' @return A dibble of input coefficient matrix.
 #'
 #' @export
-input_coeff <- function(x,
-                        input_type = "industry",
-                        output_type = "industry") {
+input_coef <- function(x,
+                       input_type = "industry",
+                       output_type = "industry") {
   input_type <- arg_match(input_type, c("industry", "valueadded"),
                           multiple = TRUE)
   output_type <- arg_match(output_type, c("industry", "finaldemand", "export", "import"),
@@ -37,9 +37,9 @@ input_coeff <- function(x,
 #' @return A dibble of allocation coefficient matrix.
 #'
 #' @export
-alloc_coeff <- function(x,
-                        input_type = "industry",
-                        output_type = "industry") {
+alloc_coef <- function(x,
+                       input_type = "industry",
+                       output_type = "industry") {
   input_type <- arg_match(input_type, c("industry", "valueadded"),
                           multiple = TRUE)
   output_type <- arg_match(output_type, c("industry", "finaldemand", "export", "import"),
@@ -65,7 +65,7 @@ alloc_coeff <- function(x,
 #' @return A dibble of import coefficient vector.
 #'
 #' @export
-import_coeff <- function(x) {
+import_coef <- function(x) {
   import <- import_value(x)
   localdemand <- local_demand(x)
 
@@ -81,7 +81,7 @@ import_coeff <- function(x) {
 #' @return A dibble of export coefficient vector.
 #'
 #' @export
-export_coeff <- function(x) {
+export_coef <- function(x) {
   export <- export_value(x)
   totaloutput <- total_output(x)
 
