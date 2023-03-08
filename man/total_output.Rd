@@ -4,12 +4,18 @@
 \alias{total_output}
 \title{Total output}
 \usage{
-total_output(x, input_type = "industry")
+total_output(
+  x,
+  input_type = "industry",
+  output_type = c("industry", "finaldemand", "export", "import")
+)
 }
 \arguments{
 \item{x}{A input-output table.}
 
 \item{input_type}{Input type.}
+
+\item{output_type}{Output type.}
 }
 \value{
 A dibble of total output.

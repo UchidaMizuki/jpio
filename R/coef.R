@@ -16,7 +16,7 @@ input_coef <- function(x,
                            multiple = TRUE)
 
   totalinput <- x |>
-    total_input(output_type)
+    total_input(output_type = output_type)
 
   x <- x |>
     dplyr::filter(.data$input$type %in% input_type,
@@ -46,7 +46,7 @@ alloc_coef <- function(x,
                            multiple = TRUE)
 
   totaloutput <- x |>
-    total_output(input_type)
+    total_output(input_type = input_type)
 
   x <- x |>
     dplyr::filter(.data$input$type %in% input_type,
@@ -69,9 +69,9 @@ import_coef <- function(x) {
   totalimport <- total_import(x)
   localdemand <- local_demand(x)
 
-  dibble::ifelse(import == 0,
+  dibble::ifelse(totalimport == 0,
                  0,
-                 import / localdemand)
+                 totalimport / localdemand)
 }
 
 #' Export coefficient vector

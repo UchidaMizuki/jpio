@@ -1,3 +1,55 @@
+#' Production inducement
+#'
+#' @param x An input-output table.
+#' @param mat_type A type of Leontief inverse matrix.
+#'
+#' @return A dibble of production inducement.
+#'
+#' @export
+production_inducement <- function(x,
+                                  mat_type = c("open", "closed")) {
+  mat_type <- arg_match(mat_type, c("open", "closed"))
+
+  leontiefinv <- leontief_inv(x,
+                              mat_type = mat_type)
+  finaldemand <- total_output(x,
+                              output_type = c("industry", "finaldemand"))
+  export <- total_export(x)
+
+  if (mat_type == "open") {
+    M <- import_coef(x)
+    dibble::dibble(finaldemand = leontiefinv %*% ((1 - M) * finaldemand),
+                   export = leontiefinv %*% export)
+  } else if (mat_type == "closed") {
+    import <- total_import(x)
+    dibble::dibble(finaldemand = leontiefinv %*% finaldemand,
+                   export = leontiefinv %*% export,
+                   import = -leontiefinv %*% import)
+  }
+}
+
+#' Self sufficiency
+#'
+#' @param x An input-output table.
+#'
+#' @return A dibble of self sufficiency.
+#'
+#' @export
+self_sufficiency <- function(x,
+                             summary = FALSE) {
+  productioninducement <- production_inducement(x,
+                                                mat_type = "closed")
+  finaldemand <- productioninducement$finaldemand
+  export <- productioninducement$export
+  import <- productioninducement$import
+
+  if (summary) {
+    (sum(finaldemand) + sum(export) + sum(import)) / sum(finaldemand)
+  } else {
+    (finaldemand + export + import) / finaldemand
+  }
+}
+
 #' Draw a skyline chart
 #'
 #' @param x An input-output table.
@@ -5,17 +57,10 @@
 #' @return A ggplot object.
 #'
 #' @export
-skyline <- function(x) {
-  as_tibble_unnest <- function(x, n) {
-    x |>
-      tibble::as_tibble(n = n) |>
-      tidyr::unnest("output",
-                    names_sep = "_")
-  }
-
+skyline_chart <- function(x) {
   # total input
   totalinput <- total_input(x) |>
-    as_tibble_unnest(n = "totalinput") |>
+    as_tibble_iotable(n = "totalinput") |>
     dplyr::mutate(totalinput = .data$totalinput / sum(.data$totalinput)) |>
     dplyr::mutate(xmax = cumsum(.data$totalinput),
                   xmin = dplyr::lag(.data$xmax,
@@ -23,38 +68,18 @@ skyline <- function(x) {
                   .keep = "unused")
 
   # self sufficiency
-  leontiefinv <- leontief_inv(x,
-                              mat_type = "closed")
+  productioninducement <- production_inducement(x,
+                                                mat_type = "closed")
+  finaldemand <- productioninducement$finaldemand
+  export <- productioninducement$export
+  import <- productioninducement$import
 
-  finaldemand <- x |>
-    dplyr::filter(.data$input$type == "industry",
-                  .data$output$type == "finaldemand") |>
-    dibble::apply("input", sum)
-
-  export <- x |>
-    dplyr::filter(.data$input$type == "industry",
-                  .data$output$type == "export") |>
-    dibble::apply("input", sum)
-
-  import <- x |>
-    dplyr::filter(.data$input$type == "industry",
-                  .data$output$type == "import") |>
-    dibble::apply("input", sum)
-
-  # induced production value
-  induced_by_finaldemand <- leontiefinv %*% finaldemand
-  induced_by_export <- leontiefinv %*% export
-  induced_by_import <- leontiefinv %*% import
-
-  self_sufficiency_export <- induced_by_export / induced_by_finaldemand
-  self_sufficiency_import <- induced_by_import / induced_by_finaldemand
-
-  domestic_production <- as_tibble_unnest(1 + self_sufficiency_export + self_sufficiency_import,
-                                          n = "domestic_production") |>
+  domestic_production <- as_tibble_iotable((finaldemand + export + import) / finaldemand,
+                                           n = "domestic_production") |>
     tibble::add_column(ymin = 0) |>
     dplyr::rename(ymax = "domestic_production")
-  import_substitution <- as_tibble_unnest(1 + self_sufficiency_export,
-                                          n = "import_substitution") |>
+  import_substitution <- as_tibble_iotable((finaldemand + export) / finaldemand,
+                                           n = "import_substitution") |>
     dplyr::rename(ymax = import_substitution) |>
     dplyr::left_join(domestic_production |>
                        dplyr::select(!"ymin") |>
@@ -97,19 +122,30 @@ skyline <- function(x) {
                                        xend = .data$xend,
                                        yend = .data$yend),
                           color = "red") +
+    ggrepel::geom_text_repel(data = self_sufficiency |>
+                               dplyr::distinct(output_type, output_name, xmin, xmax) |>
+                               dplyr::mutate(x = (.data$xmin + .data$xmax) / 2),
+                             ggplot2::aes(x = .data$x,
+                                          y = 0,
+                                          label = .data$output_name),
+                             nudge_y = -0.1,
+                             hjust = 0,
+                             angle = -90,
+                             direction = "x") +
+    ggplot2::scale_x_continuous(NULL,
+                                breaks = seq(0, 1, 0.2),
+                                labels = scales::label_percent(),
+                                position = "top") +
+    ggplot2::scale_y_continuous(NULL,
+                                limits = c(-0.5, NA_real_),
+                                labels = \(x) {
+                                  dplyr::if_else(x >= 0,
+                                                 scales::label_percent()(x),
+                                                 "")
+                                }) +
     ggplot2::scale_fill_manual(NULL,
                                values = c(import_substitution = "darkgray",
                                           domestic_production = "whitesmoke"),
                                labels = c(import_substitution = "Import Substitution",
-                                          domestic_production = "Domestic Production")) +
-    ggplot2::scale_x_continuous(NULL,
-                                breaks = self_sufficiency |>
-                                  dplyr::mutate(breaks = (.data$xmin + .data$xmax) / 2) |>
-                                  dplyr::pull("breaks"),
-                                labels = self_sufficiency$output_name) +
-    ggplot2::scale_y_continuous(NULL,
-                                labels = scales::label_percent()) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = -90,
-                                                       hjust = 0,
-                                                       vjust = 0.5))
+                                          domestic_production = "Domestic Production"))
 }

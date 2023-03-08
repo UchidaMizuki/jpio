@@ -4,7 +4,11 @@
 \alias{total_input}
 \title{Total input}
 \usage{
-total_input(x, output_type = "industry")
+total_input(
+  x,
+  input_type = c("industry", "valueadded"),
+  output_type = "industry"
+)
 }
 \arguments{
 \item{x}{A input-output table.}

@@ -7,31 +7,40 @@
 #'
 #' @export
 total_input <- function(x,
+                        input_type = c("industry", "valueadded"),
                         output_type = "industry") {
+  input_type <- arg_match(input_type, c("industry", "valueadded"),
+                          multiple = TRUE)
   output_type <- arg_match(output_type, c("industry", "finaldemand", "export", "import"),
                            multiple = TRUE)
 
   x |>
-    dibble::apply("output", sum) |>
-    dplyr::filter(.data$output$type %in% output_type)
+    dplyr::filter(.data$input$type %in% input_type,
+                  .data$output$type %in% output_type) |>
+    dibble::apply("output", sum)
 }
 
 #' Total output
 #'
 #' @param x A input-output table.
 #' @param input_type Input type.
+#' @param output_type Output type.
 #'
 #' @return A dibble of total output.
 #'
 #' @export
 total_output <- function(x,
-                         input_type = "industry") {
+                         input_type = "industry",
+                         output_type = c("industry", "finaldemand", "export", "import")) {
   input_type <- arg_match(input_type, c("industry", "valueadded"),
                           multiple = TRUE)
+  output_type <- arg_match(output_type, c("industry", "finaldemand", "export", "import"),
+                           multiple = TRUE)
 
   x |>
-    dibble::apply("input", sum) |>
-    dplyr::filter(.data$input$type %in% input_type)
+    dplyr::filter(.data$input$type %in% input_type,
+                  .data$output$type %in% output_type) |>
+    dibble::apply("input", sum)
 }
 
 #' Local demand
@@ -48,9 +57,9 @@ local_demand <- function(x,
                           multiple = TRUE)
 
   x |>
-    dplyr::filter(!.data$output$type %in% c("export", "import")) |>
-    dibble::apply("input", sum) |>
-    dplyr::filter(.data$input$type %in% input_type)
+    dplyr::filter(.data$input$type %in% input_type,
+                  .data$output$type %in% c("industry", "finaldemand")) |>
+    dibble::apply("input", sum)
 }
 
 #' Total export
@@ -61,10 +70,9 @@ local_demand <- function(x,
 #'
 #' @export
 total_export <- function(x) {
-  x |>
-    dplyr::filter(.data$input$type == "industry",
-                  .data$output$type == "export") |>
-    dibble::apply("input", sum)
+  total_output(x,
+               input_type = "industry",
+               output_type = "export")
 }
 
 #' Total import
@@ -75,9 +83,7 @@ total_export <- function(x) {
 #'
 #' @export
 total_import <- function(x) {
-  out <- x |>
-    dplyr::filter(.data$input$type == "industry",
-                  .data$output$type == "import") |>
-    dibble::apply("input", sum)
-  -out
+  -total_output(x,
+                input_type = "industry",
+                output_type = "import")
 }
