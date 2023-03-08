@@ -37,7 +37,7 @@ iotable_sector13_2011
 #>  9 industry   01_農林水産業 industry    09_運輸・郵便          2137
 #> 10 industry   01_農林水産業 industry    10_情報通信               0
 #> # … with 427 more rows
-skyline(iotable_sector13_2011)
+skyline_chart(iotable_sector13_2011)
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />

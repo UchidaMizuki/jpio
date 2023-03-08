@@ -33,5 +33,5 @@ devtools::install_github("UchidaMizuki/jpio")
 library(jpio)
 
 iotable_sector13_2011
-skyline(iotable_sector13_2011)
+skyline_chart(iotable_sector13_2011)
 ```
