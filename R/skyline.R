@@ -13,7 +13,7 @@ production_inducement <- function(x,
   leontiefinv <- leontief_inv(x,
                               mat_type = mat_type)
   finaldemand <- total_output(x,
-                              output_type = c("industry", "finaldemand"))
+                              output_type = "finaldemand")
   export <- total_export(x)
 
   if (mat_type == "open") {
