@@ -66,7 +66,7 @@ alloc_coef <- function(x,
 #'
 #' @export
 import_coef <- function(x) {
-  import <- import_value(x)
+  totalimport <- total_import(x)
   localdemand <- local_demand(x)
 
   dibble::ifelse(import == 0,
@@ -82,10 +82,10 @@ import_coef <- function(x) {
 #'
 #' @export
 export_coef <- function(x) {
-  export <- export_value(x)
+  totalexport <- total_export(x)
   totaloutput <- total_output(x)
 
-  dibble::ifelse(export == 0,
+  dibble::ifelse(totalexport == 0,
                  0,
-                 export / totaloutput)
+                 totalexport / totaloutput)
 }
