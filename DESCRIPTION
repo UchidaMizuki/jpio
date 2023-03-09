@@ -14,8 +14,11 @@ Imports:
     dibble (>= 0.2.0.9000),
     dplyr,
     ggplot2,
+    ggpp,
+    ggrepel,
     rlang,
     scales,
+    stringr,
     tibble,
     tidyr,
     vctrs

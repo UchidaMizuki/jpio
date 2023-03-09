@@ -29,9 +29,12 @@ You can install the development version of jpio from [GitHub](https://github.com
 devtools::install_github("UchidaMizuki/jpio")
 ```
 
-```{r}
+```{r, message=FALSE, dev='ragg_png', dpi=150}
 library(jpio)
+library(ggplot2)
+theme_set(theme_minimal())
 
 iotable_sector13_2011
-skyline_chart(iotable_sector13_2011)
+skyline_chart(iotable_sector13_2011,
+              ylim = c(-0.7, NA))
 ```

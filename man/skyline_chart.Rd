@@ -4,10 +4,55 @@
 \alias{skyline_chart}
 \title{Draw a skyline chart}
 \usage{
-skyline_chart(x)
+skyline_chart(
+  x,
+  domestic_production_color = "whitesmoke",
+  domestic_production_label = "Domestic Production",
+  import_substitution_color = "darkgray",
+  import_substitution_label = "Import Substitution",
+  self_sufficiency_label =
+    "Self sufficiency: {scales::label_percent(accuracy = 0.1)(value)}",
+  ylim = c(-1, NA_real_),
+  args_geom_rect = NULL,
+  args_geom_hline = NULL,
+  args_geom_segment = NULL,
+  args_geom_text_repel = NULL,
+  args_scale_x_continuous = NULL,
+  args_scale_y_continuous = NULL,
+  args_scale_fill_manual = NULL,
+  args_annotate = NULL
+)
 }
 \arguments{
 \item{x}{An input-output table.}
+
+\item{domestic_production_color}{Domestic production color.}
+
+\item{domestic_production_label}{Domestic production label.}
+
+\item{import_substitution_color}{Import substitution color.}
+
+\item{import_substitution_label}{Import substitution label.}
+
+\item{self_sufficiency_label}{Self sufficiency label.}
+
+\item{ylim}{Limits of y axis.}
+
+\item{args_geom_rect}{Arguments for [ggplot2::geom_rect()].}
+
+\item{args_geom_hline}{Arguments for [ggplot2::geom_hline()].}
+
+\item{args_geom_segment}{Arguments for [ggplot2::geom_segment()].}
+
+\item{args_geom_text_repel}{Arguments for [ggrepel::geom_text_repel()].}
+
+\item{args_scale_x_continuous}{Arguments for [ggplot2::scale_x_continuous()].}
+
+\item{args_scale_y_continuous}{Arguments for [ggplot2::scale_y_continuous()].}
+
+\item{args_scale_fill_manual}{Arguments for [ggplot2::scale_fill_manual()].}
+
+\item{args_annotate}{Arguments for [ggpp::annotate()].}
 }
 \value{
 A ggplot object.

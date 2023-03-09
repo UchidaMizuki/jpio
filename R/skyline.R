@@ -53,11 +53,39 @@ self_sufficiency <- function(x,
 #' Draw a skyline chart
 #'
 #' @param x An input-output table.
+#' @param domestic_production_color Domestic production color.
+#' @param domestic_production_label Domestic production label.
+#' @param import_substitution_color Import substitution color.
+#' @param import_substitution_label Import substitution label.
+#' @param self_sufficiency_label Self sufficiency label.
+#' @param ylim Limits of y axis.
+#' @param args_geom_rect Arguments for [ggplot2::geom_rect()].
+#' @param args_geom_hline Arguments for [ggplot2::geom_hline()].
+#' @param args_geom_segment Arguments for [ggplot2::geom_segment()].
+#' @param args_geom_text_repel Arguments for [ggrepel::geom_text_repel()].
+#' @param args_scale_x_continuous Arguments for [ggplot2::scale_x_continuous()].
+#' @param args_scale_y_continuous Arguments for [ggplot2::scale_y_continuous()].
+#' @param args_scale_fill_manual Arguments for [ggplot2::scale_fill_manual()].
+#' @param args_annotate Arguments for [ggpp::annotate()].
 #'
 #' @return A ggplot object.
 #'
 #' @export
-skyline_chart <- function(x) {
+skyline_chart <- function(x,
+                          domestic_production_color = "whitesmoke",
+                          domestic_production_label = "Domestic Production",
+                          import_substitution_color = "darkgray",
+                          import_substitution_label = "Import Substitution",
+                          self_sufficiency_label = "Self sufficiency: {scales::label_percent(accuracy = 0.1)(value)}",
+                          ylim = c(-1, NA_real_),
+                          args_geom_rect = NULL,
+                          args_geom_hline = NULL,
+                          args_geom_segment = NULL,
+                          args_geom_text_repel = NULL,
+                          args_scale_x_continuous = NULL,
+                          args_scale_y_continuous = NULL,
+                          args_scale_fill_manual = NULL,
+                          args_annotate = NULL) {
   # total input
   totalinput <- total_input(x) |>
     as_tibble_iotable(n = "totalinput") |>
@@ -108,44 +136,86 @@ skyline_chart <- function(x) {
                                                             yend = dplyr::lag(.data$y)) |>
                                               dplyr::slice(-1))
 
-  self_sufficiency |>
+  # Arguments
+  dots_list_named_first <- purrr::partial(dots_list,
+                                          .named = TRUE,
+                                          .homonyms = "first")
+  args_geom_rect <- dots_list_named_first(!!!args_geom_rect,
+                                          color = "black")
+  args_geom_hline <- dots_list_named_first(!!!args_geom_hline,
+                                           color = "black")
+  args_geom_segment <- dots_list_named_first(!!!args_geom_segment,
+                                             color = "red")
+  args_geom_text_repel <- dots_list_named_first(!!!args_geom_text_repel,
+                                                nudge_y = -0.1,
+                                                hjust = 0,
+                                                angle = -90,
+                                                direction = "x")
+  args_scale_x_continuous <- dots_list_named_first(!!!args_scale_x_continuous,
+                                                   name = NULL,
+                                                   breaks = seq(0, 1, 0.2),
+                                                   labels = scales::label_percent(),
+                                                   position = "top")
+  args_scale_y_continuous <- dots_list_named_first(!!!args_scale_y_continuous,
+                                                   name = NULL,
+                                                   labels = \(x) {
+                                                     dplyr::if_else(x >= 0,
+                                                                    scales::label_percent()(x),
+                                                                    "")
+                                                   })
+  args_scale_fill_manual <- dots_list_named_first(values = c(domestic_production = domestic_production_color,
+                                                             import_substitution = import_substitution_color),
+                                                  labels = c(domestic_production = domestic_production_label,
+                                                             import_substitution = import_substitution_label),
+                                                  !!!args_scale_fill_manual,
+                                                  name = NULL)
+  if (!is.null(self_sufficiency_label)) {
+    value <- (sum(finaldemand) + sum(export) + sum(import)) / sum(finaldemand)
+    args_annotate <- dots_list_named_first(label = stringr::str_glue(self_sufficiency_label),
+                                           !!!args_annotate,
+                                           geom = "text_npc",
+                                           npcx = "right",
+                                           npcy = "top",
+                                           color = "red")
+  }
+
+  out <- self_sufficiency |>
     ggplot2::ggplot() +
-    ggplot2::geom_rect(ggplot2::aes(xmin = .data$xmin,
-                                    xmax = .data$xmax,
-                                    ymin = .data$ymin,
-                                    ymax = .data$ymax,
-                                    fill = .data$fill),
-                       color = "black") +
-    ggplot2::geom_hline(yintercept = 1) +
-    ggplot2::geom_segment(data = line_self_sufficiency,
-                          ggplot2::aes(.data$x, .data$y,
-                                       xend = .data$xend,
-                                       yend = .data$yend),
-                          color = "red") +
-    ggrepel::geom_text_repel(data = self_sufficiency |>
-                               dplyr::distinct(output_type, output_name, xmin, xmax) |>
-                               dplyr::mutate(x = (.data$xmin + .data$xmax) / 2),
-                             ggplot2::aes(x = .data$x,
-                                          y = 0,
-                                          label = .data$output_name),
-                             nudge_y = -0.1,
-                             hjust = 0,
-                             angle = -90,
-                             direction = "x") +
-    ggplot2::scale_x_continuous(NULL,
-                                breaks = seq(0, 1, 0.2),
-                                labels = scales::label_percent(),
-                                position = "top") +
-    ggplot2::scale_y_continuous(NULL,
-                                limits = c(-0.5, NA_real_),
-                                labels = \(x) {
-                                  dplyr::if_else(x >= 0,
-                                                 scales::label_percent()(x),
-                                                 "")
-                                }) +
-    ggplot2::scale_fill_manual(NULL,
-                               values = c(import_substitution = "darkgray",
-                                          domestic_production = "whitesmoke"),
-                               labels = c(import_substitution = "Import Substitution",
-                                          domestic_production = "Domestic Production"))
+    exec(ggplot2::geom_rect,
+         ggplot2::aes(xmin = .data$xmin,
+                      xmax = .data$xmax,
+                      ymin = .data$ymin,
+                      ymax = .data$ymax,
+                      fill = .data$fill),
+         !!!args_geom_rect) +
+    exec(ggplot2::geom_hline,
+         yintercept = 1,
+         !!!args_geom_hline) +
+    exec(ggplot2::geom_segment,
+         data = line_self_sufficiency,
+         ggplot2::aes(.data$x, .data$y,
+                      xend = .data$xend,
+                      yend = .data$yend),
+         !!!args_geom_segment) +
+    exec(ggrepel::geom_text_repel,
+         data = self_sufficiency |>
+           dplyr::distinct(output_type, output_name, xmin, xmax) |>
+           dplyr::mutate(x = (.data$xmin + .data$xmax) / 2),
+         ggplot2::aes(x = .data$x,
+                      y = 0,
+                      label = .data$output_name),
+         !!!args_geom_text_repel) +
+    exec(ggplot2::scale_x_continuous,
+         !!!args_scale_x_continuous) +
+    exec(ggplot2::scale_y_continuous,
+         !!!args_scale_y_continuous) +
+    exec(ggplot2::scale_fill_manual,
+         !!!args_scale_fill_manual) +
+    ggplot2::coord_cartesian(ylim = ylim)
+
+  if (!is.null(self_sufficiency_label)) {
+    out +
+      exec(ggpp::annotate,
+           !!!args_annotate)
+  }
 }

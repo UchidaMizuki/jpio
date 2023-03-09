@@ -20,6 +20,8 @@ devtools::install_github("UchidaMizuki/jpio")
 
 ``` r
 library(jpio)
+library(ggplot2)
+theme_set(theme_minimal())
 
 iotable_sector13_2011
 #> # A dibble:   437
@@ -37,7 +39,8 @@ iotable_sector13_2011
 #>  9 industry   01_農林水産業 industry    09_運輸・郵便          2137
 #> 10 industry   01_農林水産業 industry    10_情報通信               0
 #> # … with 427 more rows
-skyline_chart(iotable_sector13_2011)
+skyline_chart(iotable_sector13_2011,
+              ylim = c(-0.7, NA))
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
